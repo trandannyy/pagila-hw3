@@ -63,6 +63,34 @@
     ```
     $ git checkout master
     $ git log -n1
+commit 5ba5a57aeb159f75f02aca2432d3c262186d13d3 (HEAD -> master, origin/master, origin/HEAD)
+Merge: f12dba5 58f7b6a
+Author: Devrim Gündüz <devrim@gunduz.org>
+Date:   Mon Dec 2 02:05:41 2024 +0400
+
+    Merge pull request #37 from pashagolub/jsonb-docker-compose
+
+    Support JSONB data in Docker compose
+    ```
+    Observe that you now have data from December 2024.
+
+    This data is actually *too* recent for us.
+    We don't in general want to pin our datasets to a branch,
+    because branches change.
+    And when new commit is added to a branch,
+    it could break all of our test cases :(
+
+    Instead, we always should specify specific commit hashes for our data.
+    Commits never change,
+    and so if we specify a commit hash,
+    then we are guaranteed to have test cases that will be correct forever.
+
+    For this assignment,
+    the `expected` folder assumes data from pagila commit `e1e5a855`.
+    Get the correct data with
+    ```
+    $ git checkout e1e5a855
+    $ git log -n1
     commit e1e5a855c46176bc0e17b7e8dea2f61e555fb378 (HEAD -> master, origin/master, origin/HEAD)
     Merge: fef9675 93126fa
     Author: Devrim Gündüz <devrim@gunduz.org>
@@ -72,10 +100,16 @@
 
         More diverse data #28
     ```
-    Observe that you now have very recent data from January 2024.
+    To access this data from within postgres, you will need to brind down your docker containers, and rebuild the images.
 
-    To get access to this data, you will need to brind down your docker containers, and rebuild the images.
-    You can verify that you have access to the new data by recounting the number of stores and staff members.
+    > **NOTE:**
+    > Notice that I have stopped telling you *how* to do this procedure...
+    > you should have done it enough now to either have the commands memorized or know exactly where to look them up.
+    > I will soon also stop telling you *when* to do this procedure.
+    > In real world tutorials / projects,
+    > it is often assumed that the developer knows enough about docker to know when to use what docker commands without prompting.
+
+    You can verify that you have access to the correct new data by recounting the number of stores and staff members.
     ```
     postgres=# select count(*) from store;
      count
@@ -97,9 +131,15 @@
     > A common complaint from industry about newly graduated data science students is that they don't know how to version control data.
     > One of the purposes of this assignment is to familiarize you with this concept.
 
-
 1. Complete the test cases in the same way that you did for the [pagila-hw](https://github.com/mikeizbicki/pagila-hw) assignment.
 
     > **NOTE:**
     > When you upload to github,
     > you will have to ensure that github actions is aware of the new pagila dataset.
+    > The right way to do this is to add the pagila submodule to your git repo.
+    > ```
+    > $ git add pagila
+    > ```
+    > This registers the current `pagila` commit as the commit your project will use.
+    > When the test cases download the pagila submodule,
+    > they will automatically checkout the correct commit hash.
