@@ -18,3 +18,34 @@
  * ```
  * This problem should be solved by a self join on the "film_category" table.
  */
+
+WITH american_circus_categories AS (
+  SELECT category_id
+  FROM film_category
+  WHERE film_id = (SELECT film_id FROM film WHERE title = 'AMERICAN CIRCUS')
+),
+similar_movies AS (
+  SELECT f.title, COUNT(DISTINCT fc.category_id) AS shared_categories
+  FROM film f
+  JOIN film_category fc ON f.film_id = fc.film_id
+  WHERE fc.category_id IN (SELECT category_id FROM american_circus_categories)
+  GROUP BY f.title
+  HAVING COUNT(DISTINCT fc.category_id) = 2 OR f.title = 'AMERICAN CIRCUS'
+)
+SELECT title FROM similar_movies
+ORDER BY title;
+
+
+--SELECT title
+--FROM film
+--WHERE film_id IN (
+--  SELECT DISTINCT f2.film_id
+--  FROM film_category f1
+--  JOIN film_category f2 ON f1.category_id = f2.category_id
+--  WHERE f1.film_id = (SELECT film_id FROM film WHERE title = 'AMERICAN CIRCUS')
+--    AND f2.film_id != (SELECT film_id FROM film WHERE title = 'AMERICAN CIRCUS')
+--  GROUP BY f2.film_id
+--  HAVING (COUNT(DISTINCT f1.category_id) = 2) OR (title = 'AMERICAN CIRCUS')
+--)
+--
+--ORDER BY title;
